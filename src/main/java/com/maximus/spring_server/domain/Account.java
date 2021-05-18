@@ -1,5 +1,6 @@
 package com.maximus.spring_server.domain;
 
+import com.maximus.spring_server.domain.value.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,21 +11,23 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 public class Account {
+    private Long accountId;
+    private User user;
 
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "username",nullable = false)
-    private String username;
-
-    @Column(name = "password",nullable = false)
-    private String password;
-
-    @Builder
-    public Account(String username, String password) {
-        this.username = username;
-        this.password = password;
+    public Account(Long accountId, User user) {
+        this.accountId = accountId;
+        this.user = user;
     }
+
+    public void save(Long accountId) {
+        verifyExitsUser(accountId);
+
+    }
+
+    private void verifyExitsUser(Long accountId) {
+        if (this.accountId == accountId) throw new IllegalArgumentException("no");
+
+    }
+
+
 }

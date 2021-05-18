@@ -1,6 +1,7 @@
 package com.maximus.spring_server.service;
 
 
+import com.maximus.spring_server.domain.Account;
 import com.maximus.spring_server.dto.AccountSaveDto;
 import com.maximus.spring_server.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,22 +18,14 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
 
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "잘못된 접근입니다.")
-    public class UrlNotFoundException extends RuntimeException {
-    }
-
     @Transactional
-    public Long save(AccountSaveDto accountSaveDto) {
-        String username = accountSaveDto.getUsername();
-        boolean anyMatch = accountRepository.findAll()
-                .stream()
-                .limit(1)
-                .anyMatch((s) -> s.getUsername().equals(username));
-        if (anyMatch == true) {
-            throw new UrlNotFoundException();
-        }
-        return accountRepository.save(accountSaveDto.toEntity()).getId();
+    public void save(Long id) {
+        Account account = accountRepository.findById(id);
 
+        if (account == null) {
+            throw new IllegalArgumentException("account not content");
+        }
+        account.save();
 
     }
 }
