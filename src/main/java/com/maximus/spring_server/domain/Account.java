@@ -1,33 +1,37 @@
 package com.maximus.spring_server.domain;
 
-import com.maximus.spring_server.domain.value.User;
-import lombok.Builder;
+import com.maximus.spring_server.repository.AccountRepository;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 import javax.persistence.*;
 
+@RequiredArgsConstructor
 @Entity
 @Getter
-@NoArgsConstructor
+@Table(name = "account")
 public class Account {
-    private Long accountId;
-    private User user;
 
-    public Account(Long accountId, User user) {
-        this.accountId = accountId;
-        this.user = user;
+    private final AccountRepository accountRepository;
+
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long userId;
+
+    @Id
+    @Column(name = "username")
+    private String username;
+
+    @Column(name = "password")
+    private String password;
+
+    public void save(Account account){
+        account.checkExistUser(account.getUsername());
     }
 
-    public void save(Long accountId) {
-        verifyExitsUser(accountId);
+    private void checkExistUser(String username) {
+        if (accountRepository.existsById(username) || username.isEmpty()) throw new IllegalArgumentException("!!!");
 
     }
-
-    private void verifyExitsUser(Long accountId) {
-        if (this.accountId == accountId) throw new IllegalArgumentException("no");
-
-    }
-
 
 }

@@ -1,22 +1,28 @@
 package com.maximus.spring_server.controller;
 
-
-import com.maximus.spring_server.dto.AccountSaveDto;
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.maximus.spring_server.domain.Account;
 import com.maximus.spring_server.service.AccountService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequiredArgsConstructor
 public class AccountController {
+    @Autowired
+    private AccountService accountService;
 
-    private final AccountService accountService;
-
-    @PostMapping("/account/signup")
-    public Long save(@RequestBody AccountSaveDto accountSaveDto) {
-        return accountService.save(accountSaveDto);
+    @ResponseBody
+    @RequestMapping(value = "/account/signup", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public HttpEntity<Account> signUp(@RequestBody Account account) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        try {
+            accountService.saveUser(account);
+            return new HttpEntity<Account>(account,httpHeaders);
+        } catch () {
+            return account;
+        }
     }
-
 }
