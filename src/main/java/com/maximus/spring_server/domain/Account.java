@@ -1,36 +1,41 @@
 package com.maximus.spring_server.domain;
 
-import com.maximus.spring_server.repository.AccountRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-@RequiredArgsConstructor
 @Entity
 @Getter
 @Table(name = "account")
 public class Account {
 
-    private final AccountRepository accountRepository;
-
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long userId;
-
-    @Id
-    @Column(name = "username")
-    private String username;
-
-    @Column(name = "password")
-    private String password;
-
-    public void save(Account account){
-        account.checkExistUser(account.getUsername());
+    public Account(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
-    private void checkExistUser(String username) {
-        if (accountRepository.existsById(username) || username.isEmpty()) throw new IllegalArgumentException("!!!");
+    @Id
+    @Column(name = "username", nullable = false)
+    private String username;
+
+    @Column(name = "password", nullable = false)
+    private String password;
+
+    public void save() {
+        checkUser(username);
+        checkPassword(password);
+    }
+
+    private void checkPassword(String password) {
+        if (password.isEmpty()) throw new IllegalArgumentException("no password");
+    }
+
+    private void checkUser(String username) {
+        if (username.isEmpty()) throw new IllegalArgumentException("!!!");
 
     }
 
